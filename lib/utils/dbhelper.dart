@@ -13,14 +13,13 @@ class DatabaseHelper{
 
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance=DatabaseHelper._privateConstructor();
+
   static Database? _database;
 
-  Future<Database> get database async{
-    if(_database!=null) return _database;
-    _database=await _initDatabase();
-  }
+  Future<Database> get database async =>
+      _database ??= await _initDatabase();
 
-  _initDatabase() async{
+Future<Database> _initDatabase() async{
     String path=join(await getDatabasesPath(),_databaseName);
     return await openDatabase(path,
     version:_databaseVersion,
@@ -39,7 +38,7 @@ class DatabaseHelper{
 }
 
 Future<int> insert(Car car) async{
-    Database db=await instance.database;
+    Database? db=await instance.database;
     return await db.insert(table,
         {'name':car.name,'miles':car.miles});
 }
@@ -57,7 +56,7 @@ Future<int> delete(int id) async{
 
 Future<List<Map<String,dynamic>>> queryRows(name) async{
     Database db=await instance.database;
-    return await db.query(table,where: "$columnName LIKE'%name%'");
+    return await db.query(table,where: "$columnName LIKE'%$name%'");
 }
 
 Future<List<Map<String,dynamic>>> queryAllRows() async{
